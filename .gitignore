@@ -4,3 +4,13 @@ protected/runtime/*
 !protected/runtime/.gitignore
 protected/data/*.db
 themes/classic/views/
+
+
+# composer vendor dir
+/vendor
+
+# composer itself is not needed
+composer.phar
+
+# netbeans project files
+nbproject

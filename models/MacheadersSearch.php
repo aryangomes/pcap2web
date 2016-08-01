@@ -10,24 +10,22 @@ use app\models\Macheaders;
 /**
  * MacheadersSearch represents the model behind the search form about `app\models\Macheaders`.
  */
-class MacheadersSearch extends Macheaders
-{
+class MacheadersSearch extends Macheaders {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-        [['packetId', 'protocolVersion', 'type', 'subtype', 'toDS', 'fromDS', 'moreFragments', 'retry', 'powerMgmt', 'moreData', 'protectedFrame', 'ord', 'durationId', 'fragmentNumber', 'seqNumber', 'QoSControl', 'HTControl'], 'integer'],
-        [['addr1', 'addr2', 'addr3', 'addr4'], 'safe'],
+            [['packetId', 'protocolVersion', 'type', 'subtype', 'toDS', 'fromDS', 'moreFragments', 'retry', 'powerMgmt', 'moreData', 'protectedFrame', 'ord', 'durationId', 'fragmentNumber', 'seqNumber', 'QoSControl', 'HTControl'], 'integer'],
+            [['addr1', 'addr2', 'addr3', 'addr4'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,13 +37,12 @@ class MacheadersSearch extends Macheaders
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = Macheaders::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            ]);
+        ]);
 
         $this->load($params);
 
@@ -73,20 +70,34 @@ class MacheadersSearch extends Macheaders
             'seqNumber' => $this->seqNumber,
             'QoSControl' => $this->QoSControl,
             'HTControl' => $this->HTControl,
-            ]);
+        ]);
 
         $query->andFilterWhere(['like', 'addr1', $this->addr1])
-        ->andFilterWhere(['like', 'addr2', $this->addr2])
-        ->andFilterWhere(['like', 'addr3', $this->addr3])
-        ->andFilterWhere(['like', 'addr4', $this->addr4]);
+                ->andFilterWhere(['like', 'addr2', $this->addr2])
+                ->andFilterWhere(['like', 'addr3', $this->addr3])
+                ->andFilterWhere(['like', 'addr4', $this->addr4]);
 
         return $dataProvider;
     }
 
+    public function searchForConsulta($columns, $values) {
 
-    public function searchForConsulta($columns,$values)
-    {
-        $query = Macheaders::find();
-        var_dump($columns);
+        $query = NULL;
+        $conditions = [];
+        if (count($columns) > 0 && count($values) > 0) {
+             $query = Macheaders::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+            for ($i = 0; $i < count($columns); $i++) {
+                $conditions[$columns[$i]] = $values[$i];
+            }
+//            $query = Macheaders::find()->where($conditions)->all
+             $query->andFilterWhere($conditions);
+        }
+//        return $query;
+        return $dataProvider;
     }
+
 }

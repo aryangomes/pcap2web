@@ -8,6 +8,9 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Macheaders;
+use app\models\MacheadersSearch;
+use app\controllers\MacheadersController;
 
 class SiteController extends Controller
 {
@@ -49,7 +52,46 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index');
+        
+        $model = new Macheaders();
+        
+        $macheadersSearch = null;
+        $dataProvider = null;
+        $connection = Yii::$app->db; //get connection
+
+
+        $auxTables = $connection->getTableSchema('macheaders')->columnNames; 
+        foreach ($auxTables as $tbl) {
+
+            $tables[$tbl] = $tbl;
+        }
+
+        if (Yii::$app->request->post()) {
+            // var_dump(Yii::$app->request->post());
+            $post = Yii::$app->request->post();
+            $columns = $post['column'];
+            $values = $post['value'];
+
+            $macheadersSearch = new MacheadersSearch();
+       
+            $dataProvider = $macheadersSearch->searchForConsulta($columns, $values);
+         
+            return $this->render('/macheaders/consulta', [
+                        'model' => $model,
+                        'tables' => $tables,
+                        'searchModel' => $macheadersSearch,
+                        'dataProvider' => $dataProvider,
+            ]);
+            /*   if ($model->load(Yii::$app->request->post()) && $model->save()) {
+              return $this->redirect(['view', 'id' => $model->packetId]); */
+        } else {
+            return $this->render('/macheaders/consulta', [
+                        'model' => $model,
+                        'tables' => $tables,
+                        'searchModel' => $macheadersSearch,
+                        'dataProvider' => $dataProvider,
+            ]);
+        }
     }
 
     public function actionLogin()
